@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>LDAP and Active Directory Log On</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    <!--  Use the Angular library  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-sanitize.js"></script>
+    
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    
+
+    <script type="text/javascript">
+var myApp = angular.module("myApp", []);
+var scope;
+myApp.controller("myCtrl", function($scope, $http) {
+	scope = $scope;  // Facilitate debugging
+	
+	$scope.type = "LDAP";
+	$scope.ldap = {
+		username: "riemann",		
+		password: "password"
+	};
+    $scope.response = "";
+    
+	$scope.login = () => {
+        console.log('scope.login');
+		var url = '/login';
+		
+		$scope.response = "Please wait";		
+        $http.post(url, JSON.stringify($scope.ldap))
+        .then(
+                (resp) => {
+                    console.log('response', resp);
+                    $scope.response = resp.data;
+                }
+            )
+            .catch((error) => {
+                console.log('error..');
+                $scope.response = "Error: " + JSON.stringify(error);});
+	};
+	
+    
+    
+	
+	
+});
+	</script>    
+    
+  </head>
+
+  <body ng-app="myApp" ng-controller="myCtrl">
+  
+  	<h2>LDAP Log On using passport-ldap starategy</h2>
+  	
+  	<div class="panel panel-success">
+  		
+	</div>   <!-- login type -->
+       		
+	<div class="panel panel-primary" >
+		<div class="panel-heading">
+			LDAP Details
+		</div>
+		<div class="panel-body">
+			<table class="table">
+													
+				<tr>
+					<td>Username</td>
+					<td><input type="text" ng-model="ldap.username" ></td>
+				</tr>
+				<tr>
+					<td>Password</td>
+					<td><input type="password" ng-model="ldap.password" ></td>
+				</tr>		
+							
+			</table>
+
+			<button type="button" class="btn btn-primary" 
+				ng-click="login();"
+			>
+				Attempt to log on
+			</button>
+
+		</div>
+	</div> <!-- panel for LDAP -->
+
+	<div class="panel panel-success">
+		<div class="panel-heading">
+			Response
+		</div>
+		<div class="panel-body">
+			<pre>{{response}}</pre>
+		</div>
+	</div>
+
+  </body>
+
+</html>
